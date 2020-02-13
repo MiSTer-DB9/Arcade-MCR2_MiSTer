@@ -9,3 +9,4 @@ set_global_assignment -name VHDL_FILE rtl/YM2149_linmix_sep.vhd
 set_global_assignment -name VHDL_FILE rtl/mcr_sound_board.vhd
 set_global_assignment -name VHDL_FILE rtl/mcr2.vhd
 set_global_assignment -name SYSTEMVERILOG_FILE Arcade-MCR2.sv
+set_global_assignment -name VERILOG_FILE rtl/joydb9md.v
