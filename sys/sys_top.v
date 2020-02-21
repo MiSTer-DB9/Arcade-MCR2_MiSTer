@@ -213,7 +213,8 @@ always @(posedge FPGA_CLK2_50) begin
 		if(&deb_user) btn_user <= 1;
 		if(!deb_user) btn_user <= 0;
 
-		deb_osd <= {deb_osd[6:0], btn_o | ~KEY[0]};
+		//deb_osd <= {deb_osd[6:0], btn_o | ~KEY[0]};
+deb_osd <= {deb_osd[6:0], btn_o | user_osd | ~KEY[0]};
 		if(&deb_osd) btn_osd <= 1;
 		if(!deb_osd) btn_osd <= 0;
 	end
@@ -1193,7 +1194,8 @@ sync_fix sync_v(clk_vid, vs_emu, vs_fix);
 sync_fix sync_h(clk_vid, hs_emu, hs_fix);
 
 wire  [7:0] user_out, user_in;
-wire        user_mode;
+//wire        user_mode; // Comentar esto para OSD
+wire        user_mode, user_osd; // Añadir esto para OSD
 
 `ifndef USE_SDRAM
 assign {SDRAM_DQ, SDRAM_A, SDRAM_BA, SDRAM_CLK, SDRAM_CKE, SDRAM_DQML, SDRAM_DQMH, SDRAM_nWE, SDRAM_nCAS, SDRAM_nRAS, SDRAM_nCS} = {39'bZ};
@@ -1333,6 +1335,7 @@ emu emu
 	.UART_DTR(uart_dsr),
 	.UART_DSR(uart_dtr),
 `endif
+	.USER_OSD(user_osd),
 
 	.USER_MODE(user_mode),
 	.USER_OUT(user_out),

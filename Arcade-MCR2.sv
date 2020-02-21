@@ -82,7 +82,8 @@ module emu
 	// 1 - D-/TX
 	// 2..6 - USR2..USR6
 	// Set USER_OUT to 1 to read from USER_IN.
-	output	      USER_MODE,
+	output	USER_OSD,
+	output	USER_MODE,
 	input   [7:0] USER_IN,
 	output  [7:0] USER_OUT
 );
@@ -94,6 +95,7 @@ wire   joy_split, joy_mdsel;
 wire   [5:0] joy_in = {USER_IN[6],USER_IN[3],USER_IN[5],USER_IN[7],USER_IN[1],USER_IN[2]};
 assign USER_OUT  = |status[31:30] ? {3'b111,joy_split,3'b111,joy_mdsel} : '1;
 assign USER_MODE = |status[31:30] ;
+assign USER_OSD  = joydb9md_1[7] & joydb9md_1[5];
 
 assign LED_USER  = rom_download;
 assign LED_DISK  = 0;
@@ -148,7 +150,7 @@ wire [15:0] joy1a, joy2a;
 //wire [31:0] joy1, joy2;
 wire [31:0] joy1_USB, joy2_USB;
 wire [31:0] joy1 = |status[31:30] ? {
-	joydb9md_1[8] | (joydb9md_1[7] & joydb9md_1[6]),// Mode | Stat + A -> Coin 
+	joydb9md_1[8] | (joydb9md_1[7] & joydb9md_1[4]),// Mode | Stat + B -> Coin 
 	joydb9md_1[11], // Z (dummy) 
 	joydb9md_1[7], // start 1
 	joydb9md_1[11], // Z (dummy) 
@@ -165,7 +167,7 @@ wire [31:0] joy1 = |status[31:30] ? {
 	: joy1_USB;
 
 wire [31:0] joy2 =  status[31]    ? {
-	joydb9md_2[8] | (joydb9md_2[7] & joydb9md_2[6]),// Mode | Stat + A -> Coin 
+	joydb9md_2[8] | (joydb9md_2[7] & joydb9md_2[4]),// Mode | Stat + B -> Coin 
 	joydb9md_2[7], // start 2
 	joydb9md_1[11], // Z (dummy) 
 	joydb9md_1[11], // Z (dummy) 
@@ -228,7 +230,8 @@ hps_io #(.STRLEN($size(CONF_STR)>>3)) hps_io
 	.joystick_analog_0(joy1a),
 	.joystick_analog_1(joy2a),
 
-	.ps2_key(ps2_key)
+	.joy_raw(joydb9md_1[5:0]),
+.ps2_key(ps2_key)
 );
 
 reg mod_shollow    = 0;
